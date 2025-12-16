@@ -4,5 +4,8 @@
   "private": true,
   "scripts": {
     "release": "bumpp"
+  },
+  "dependencies": {
+    "bumpp": "^10.3.2"
   }
 }
