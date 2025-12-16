@@ -141,11 +141,13 @@ jobs:
           mkdir -p sparkle_tools
           tar -xf sparkle.tar.xz -C sparkle_tools
 
-          # Generate signature
+          # Generate signature - extract only the signature value
           echo "$SPARKLE_PRIVATE_KEY" > /tmp/sparkle_private_key
-          SIGNATURE=$(sparkle_tools/bin/sign_update "$DMG_NAME" -f /tmp/sparkle_private_key)
+          SIGN_OUTPUT=$(sparkle_tools/bin/sign_update "$DMG_NAME" -f /tmp/sparkle_private_key)
           rm /tmp/sparkle_private_key
 
+          # Extract just the base64 signature from output
+          SIGNATURE=$(echo "$SIGN_OUTPUT" | grep -o 'edSignature="[^"]*"' | sed 's/edSignature="//;s/"$//')
           echo "SPARKLE_SIGNATURE=$SIGNATURE" >> $GITHUB_ENV
 
       - name: Update appcast.xml
@@ -155,31 +157,32 @@ jobs:
           VERSION="${GITHUB_REF_NAME#v}"  # Remove 'v' prefix
           DMG_SIZE=$(stat -f%z "$DMG_NAME")
           DMG_URL="https://github.com/productdevbook/port-killer/releases/download/${GITHUB_REF_NAME}/${DMG_NAME}"
+          PUB_DATE=$(date -R)
 
           # Create or update appcast.xml
-          cat > appcast.xml << EOF
-          <?xml version="1.0" encoding="utf-8"?>
-          <rss version="2.0" xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle" xmlns:dc="http://purl.org/dc/elements/1.1/">
-            <channel>
-              <title>PortKiller Updates</title>
-              <link>https://github.com/productdevbook/port-killer</link>
-              <description>Most recent updates to PortKiller</description>
-              <language>en</language>
-              <item>
-                <title>Version ${VERSION}</title>
-                <pubDate>$(date -R)</pubDate>
-                <sparkle:version>${VERSION}</sparkle:version>
-                <sparkle:shortVersionString>${VERSION}</sparkle:shortVersionString>
-                <sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
-                <enclosure
-                  url="${DMG_URL}"
-                  length="${DMG_SIZE}"
-                  type="application/octet-stream"
-                  sparkle:edSignature="${SPARKLE_SIGNATURE}" />
-              </item>
-            </channel>
-          </rss>
-          EOF
+          cat > appcast.xml << XMLEOF
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0" xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle" xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <channel>
+    <title>PortKiller Updates</title>
+    <link>https://github.com/productdevbook/port-killer</link>
+    <description>Most recent updates to PortKiller</description>
+    <language>en</language>
+    <item>
+      <title>Version ${VERSION}</title>
+      <pubDate>${PUB_DATE}</pubDate>
+      <sparkle:version>${VERSION}</sparkle:version>
+      <sparkle:shortVersionString>${VERSION}</sparkle:shortVersionString>
+      <sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
+      <enclosure
+        url="${DMG_URL}"
+        length="${DMG_SIZE}"
+        type="application/octet-stream"
+        sparkle:edSignature="${SPARKLE_SIGNATURE}" />
+    </item>
+  </channel>
+</rss>
+XMLEOF
 
       - name: Commit appcast.xml
         run: |
@@ -207,7 +210,6 @@ jobs:
 
             ### Requirements
             - macOS 15.0+ (Sequoia)
-            - Apple Silicon Mac (M1/M2/M3/M4)
           draft: false
           prerelease: false
         env:

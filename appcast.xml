@@ -15,7 +15,7 @@
         url="https://github.com/productdevbook/port-killer/releases/download/v1.2.0/PortKiller-v1.2.0-arm64.dmg"
         length="844005"
         type="application/octet-stream"
-        sparkle:edSignature="sparkle:edSignature="vzHXScBPGvYQh8uxyJ3VOVq+DkQM60ndbp0yOr5rb+GI/sxabcZU6SLj357BfOkIBdneFTweU6iC+B1XrdT2Cg==" length="844005"" />
+        sparkle:edSignature="vzHXScBPGvYQh8uxyJ3VOVq+DkQM60ndbp0yOr5rb+GI/sxabcZU6SLj357BfOkIBdneFTweU6iC+B1XrdT2Cg==" />
     </item>
   </channel>
 </rss>
