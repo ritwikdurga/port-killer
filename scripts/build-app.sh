@@ -28,6 +28,11 @@ if [ -f "Resources/AppIcon.icns" ]; then
     cp "Resources/AppIcon.icns" "$RESOURCES_DIR/"
 fi
 
+# Copy SPM resource bundle (contains toolbar icons)
+if [ -d "$BUILD_DIR/PortKiller_PortKiller.bundle" ]; then
+    cp -r "$BUILD_DIR/PortKiller_PortKiller.bundle" "$RESOURCES_DIR/"
+fi
+
 echo "🔏 Signing app bundle..."
 codesign --force --deep --sign - "$APP_DIR"
 
