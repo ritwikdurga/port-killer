@@ -28,16 +28,16 @@ if [ -f "Resources/AppIcon.icns" ]; then
     cp "Resources/AppIcon.icns" "$RESOURCES_DIR/"
 fi
 
-# Copy SPM resource bundles to BOTH locations:
-# 1. Contents/Resources (standard macOS location)
-# 2. App root (where SPM's Bundle.module accessor looks)
+# Copy SPM resource bundles to Contents/Resources
+# Then create symlinks in app root (where SPM's Bundle.module looks)
 echo "📦 Copying resource bundles..."
 for bundle in "$BUILD_DIR"/*.bundle; do
     if [ -d "$bundle" ]; then
         bundle_name=$(basename "$bundle")
         echo "  → $bundle_name"
         ditto "$bundle" "$RESOURCES_DIR/$bundle_name"
-        ditto "$bundle" "$APP_DIR/$bundle_name"  # SPM looks here!
+        # Symlink in app root for SPM compatibility
+        ln -sf "Contents/Resources/$bundle_name" "$APP_DIR/$bundle_name"
     fi
 done
 
