@@ -15,7 +15,7 @@ import Defaults
 /// when they become active (a process starts using them) or inactive (the process
 /// stops using them). Each watched port can be configured independently for
 /// start and stop notifications.
-struct WatchedPort: Identifiable, Codable, Defaults.Serializable {
+struct WatchedPort: Identifiable, Codable, Defaults.Serializable, Sendable {
     /// Unique identifier for this watched port
     let id: UUID
 

@@ -61,7 +61,8 @@ struct MenuBarActions: View {
 
             MenuItemButton(title: "Open PortKiller", icon: "macwindow", shortcut: "O") {
                 openWindow(id: "main")
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                Task { @MainActor in
+                    try? await Task.sleep(for: .milliseconds(100))
                     bringMainWindowToFront()
                 }
             }
@@ -69,7 +70,8 @@ struct MenuBarActions: View {
             MenuItemButton(title: "Sponsors", icon: "heart.fill") {
                 state.selectedSidebarItem = .sponsors
                 openWindow(id: "main")
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                Task { @MainActor in
+                    try? await Task.sleep(for: .milliseconds(100))
                     bringMainWindowToFront()
                 }
             }
@@ -77,7 +79,8 @@ struct MenuBarActions: View {
             MenuItemButton(title: "Settings...", icon: "gear", shortcut: ",") {
                 state.selectedSidebarItem = .settings
                 openWindow(id: "main")
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                Task { @MainActor in
+                    try? await Task.sleep(for: .milliseconds(100))
                     bringMainWindowToFront()
                 }
             }

@@ -153,7 +153,7 @@ final class AppState {
     private let scanner = PortScanner()
 
     /// Background task for auto-refresh
-    @ObservationIgnored private nonisolated(unsafe) var refreshTask: Task<Void, Never>?
+    @ObservationIgnored private var refreshTask: Task<Void, Never>?
 
     /// Tracks previous port states for watch notifications
     private var previousPortStates: [Int: Bool] = [:]
@@ -165,8 +165,10 @@ final class AppState {
         startAutoRefresh()
     }
 
-    deinit {
+    /// Stops the auto-refresh task
+    func stopAutoRefresh() {
         refreshTask?.cancel()
+        refreshTask = nil
     }
 
     // MARK: - Port Operations
