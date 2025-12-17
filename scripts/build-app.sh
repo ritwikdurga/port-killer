@@ -111,10 +111,13 @@ for ks_file in .build/checkouts/KeyboardShortcuts/Sources/KeyboardShortcuts/*.sw
     fi
 done
 
-# Clean only KeyboardShortcuts module (which we patched) to force recompilation
-# Don't clean other modules - they need their DerivedSources intact
-echo "🧹 Cleaning KeyboardShortcuts build artifacts..."
-rm -rf .build/*/release/KeyboardShortcuts.build
+# Touch patched files to ensure SPM sees them as modified
+echo "🔄 Updating timestamps on patched files..."
+touch .build/checkouts/KeyboardShortcuts/Sources/KeyboardShortcuts/*.swift 2>/dev/null || true
+
+# Remove compiled KeyboardShortcuts objects and executable to force recompilation
+echo "🧹 Forcing recompilation..."
+rm -f .build/*/release/KeyboardShortcuts.build/*.o 2>/dev/null || true
 rm -f .build/*/release/PortKiller
 rm -rf .build/*/release/*.bundle
 
